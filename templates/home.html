@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Rolekits{% endblock %}
+
+{% block content %}
+<div class="min-h-screen">
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Welcome to Rolekits</h1>
+                <p class="text-xl md:text-2xl mb-8 text-indigo-100">Your complete role management solution</p>
+                <div class="space-x-4">
+                    <a href="/signup" class="bg-white text-indigo-600 hover:bg-gray-100 px-8 py-3 rounded-lg text-lg font-semibold inline-block transition">Get Started</a>
+                    <a href="/login" class="bg-indigo-700 text-white hover:bg-indigo-800 px-8 py-3 rounded-lg text-lg font-semibold inline-block transition">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Features</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="text-indigo-600 text-4xl mb-4">🔒</div>
+                <h3 class="text-xl font-semibold mb-2">Secure Authentication</h3>
+                <p class="text-gray-600">JWT-based authentication with encrypted passwords</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="text-indigo-600 text-4xl mb-4">👥</div>
+                <h3 class="text-xl font-semibold mb-2">User Management</h3>
+                <p class="text-gray-600">Comprehensive user and role management system</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="text-indigo-600 text-4xl mb-4">⚡</div>
+                <h3 class="text-xl font-semibold mb-2">Fast & Reliable</h3>
+                <p class="text-gray-600">Built with FastAPI for high performance</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
