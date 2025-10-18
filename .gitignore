@@ -1,5 +1,3 @@
-rolekits-backend/
-rolekits-front/
 node_modules/
 .env
 __pycache__/
