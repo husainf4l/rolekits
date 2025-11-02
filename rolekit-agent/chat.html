@@ -3,121 +3,492 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rolekit Agent Chat</title>
+    <title>Rolekit Agent</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .chat-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 20px;
-            height: 600px;
+
+        :root {
+            --primary-blue: #007AFF;
+            --primary-blue-hover: #0051D5;
+            --bg-primary: #000000;
+            --bg-secondary: #1C1C1E;
+            --bg-tertiary: #2C2C2E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #EBEBF5;
+            --text-tertiary: #ABABAB;
+            --separator: rgba(84, 84, 88, 0.65);
+            --user-bubble: #007AFF;
+            --agent-bubble: #2C2C2E;
+            --shadow: rgba(0, 0, 0, 0.4);
+            --input-bg: #1C1C1E;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--separator);
             display: flex;
             flex-direction: column;
+            backdrop-filter: blur(20px);
         }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--separator);
+        }
+
+        .sidebar-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #007AFF 0%, #00C7FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-header p {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        .new-chat-btn {
+            margin: 16px;
+            padding: 12px 20px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .new-chat-btn:hover {
+            background: var(--primary-blue-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+        }
+
+        .new-chat-btn:active {
+            transform: translateY(0);
+        }
+
+        .conversations {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .conversation-item {
+            padding: 12px 16px;
+            margin-bottom: 4px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .conversation-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .conversation-item.active {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Main Chat Area */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+        }
+
+        .chat-header {
+            padding: 20px 32px;
+            border-bottom: 1px solid var(--separator);
+            backdrop-filter: blur(20px);
+            background: rgba(28, 28, 30, 0.8);
+        }
+
+        .chat-header h2 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chat-header p {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            background-color: #fafafa;
+            padding: 32px;
+            scroll-behavior: smooth;
         }
-        .message {
-            margin-bottom: 15px;
-            padding: 10px;
-            border-radius: 8px;
-            max-width: 80%;
+
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
         }
-        .user-message {
-            background-color: #007bff;
-            color: white;
-            margin-left: auto;
-            text-align: right;
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
         }
-        .agent-message {
-            background-color: #e9ecef;
-            color: #333;
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--separator);
+            border-radius: 4px;
         }
-        .typing {
-            font-style: italic;
-            color: #666;
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: var(--text-tertiary);
         }
-        .input-container {
+
+        .message-wrapper {
             display: flex;
-            gap: 10px;
-            align-items: center;
+            margin-bottom: 24px;
+            animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        #messageInput {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        #cvIdInput, #conversationIdInput, #bearerTokenInput {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
+
+        .message-wrapper.user {
+            justify-content: flex-end;
         }
-        #cvIdInput {
-            background-color: #fff9e6;
+
+        .message {
+            max-width: 70%;
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.5;
+            word-wrap: break-word;
         }
-        #conversationIdInput {
-            background-color: #e6f7ff;
-        }
-        #bearerTokenInput {
-            background-color: #f0f0f0;
-            font-family: monospace;
-        }
-        #sendButton {
-            padding: 12px 20px;
-            background-color: #28a745;
+
+        .user-message {
+            background: var(--user-bubble);
             color: white;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+        }
+
+        .agent-message {
+            background: var(--agent-bubble);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 6px;
+            padding: 14px 18px;
+            background: var(--agent-bubble);
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            max-width: fit-content;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-tertiary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.7;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        /* Input Area */
+        .input-container {
+            padding: 20px 32px 32px;
+            border-top: 1px solid var(--separator);
+            background: var(--bg-secondary);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            background: var(--input-bg);
+            border-radius: 20px;
+            padding: 8px 12px;
+            border: 1px solid var(--separator);
+            transition: all 0.2s ease;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .message-input {
+            flex: 1;
             border: none;
-            border-radius: 5px;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            max-height: 120px;
+            min-height: 24px;
+            padding: 8px;
+            line-height: 1.5;
+        }
+
+        .message-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .send-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary-blue);
+            color: white;
             cursor: pointer;
-            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
         }
-        #sendButton:hover {
-            background-color: #218838;
+
+        .send-btn:hover:not(:disabled) {
+            background: var(--primary-blue-hover);
+            transform: scale(1.05);
         }
-        #sendButton:disabled {
-            background-color: #6c757d;
+
+        .send-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.4;
             cursor: not-allowed;
         }
-        .status {
-            text-align: center;
-            color: #666;
+
+        .send-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Config Section */
+        .config-section {
+            padding: 16px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            margin: 16px;
+        }
+
+        .config-section h3 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .config-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--input-bg);
+            border: 1px solid var(--separator);
+            border-radius: 8px;
+            color: var(--text-primary);
             font-size: 14px;
-            margin-bottom: 10px;
+            font-family: inherit;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .config-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .config-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            padding: 32px;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .empty-state p {
+            font-size: 15px;
+            color: var(--text-tertiary);
+            max-width: 400px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .chat-container {
+                width: 100%;
+            }
+
+            .message {
+                max-width: 85%;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Rolekit Agent Chat</h1>
-    <div class="chat-container">
-        <div class="status" id="status">Connected to server</div>
-        <div class="input-container" style="margin-bottom: 10px;">
-            <input type="text" id="cvIdInput" placeholder="CV ID (optional)" style="flex: 0.3;" />
-            <input type="text" id="conversationIdInput" placeholder="Conversation ID (optional)" style="flex: 0.7;" />
-        </div>
-        <div class="input-container" style="margin-bottom: 10px;">
-            <input type="password" id="bearerTokenInput" placeholder="Bearer Token (required for CV access)" style="flex: 1;" />
-        </div>
-        <div class="chat-messages" id="chatMessages"></div>
-        <div class="input-container">
-            <input type="text" id="messageInput" placeholder="Type your message..." />
-            <button id="sendButton">Send</button>
-        </div>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Rolekit</h1>
+                <p>AI Agent Assistant</p>
+            </div>
+            
+            <button class="new-chat-btn" id="newChatBtn">
+                <svg class="send-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                New Chat
+            </button>
+
+            <div class="config-section">
+                <h3>Configuration</h3>
+                <input type="text" class="config-input" id="cvIdInput" placeholder="CV ID (optional)" />
+                <input type="text" class="config-input" id="conversationIdInput" placeholder="Conversation ID" />
+                <input type="password" class="config-input" id="bearerTokenInput" placeholder="Bearer Token" />
+            </div>
+
+            <div class="conversations" id="conversations">
+                <!-- Conversation history will be added here -->
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-container">
+            <header class="chat-header">
+                <h2 id="chatTitle">New Conversation</h2>
+                <p id="chatSubtitle">Ask me anything</p>
+            </header>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="empty-state">
+                    <div class="empty-state-icon">💬</div>
+                    <h3>Welcome to Rolekit Agent</h3>
+                    <p>Start a conversation by typing a message below. I'm here to help you with CV management and more.</p>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <textarea 
+                        class="message-input" 
+                        id="messageInput" 
+                        placeholder="Message Rolekit..."
+                        rows="1"
+                    ></textarea>
+                    <button class="send-btn" id="sendButton" disabled>
+                        <svg class="send-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script>
@@ -127,60 +498,109 @@
         const conversationIdInput = document.getElementById('conversationIdInput');
         const bearerTokenInput = document.getElementById('bearerTokenInput');
         const sendButton = document.getElementById('sendButton');
-        const statusDiv = document.getElementById('status');
+        const newChatBtn = document.getElementById('newChatBtn');
+        const chatTitle = document.getElementById('chatTitle');
+        const chatSubtitle = document.getElementById('chatSubtitle');
 
         let currentAgentMessage = null;
+        let isFirstMessage = true;
+
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            
+            // Enable/disable send button
+            sendButton.disabled = !this.value.trim();
+        });
+
+        function clearEmptyState() {
+            const emptyState = chatMessages.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
+        }
 
         function addMessage(content, isUser = false) {
+            clearEmptyState();
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = `message-wrapper ${isUser ? 'user' : 'agent'}`;
+            
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user-message' : 'agent-message'}`;
             messageDiv.textContent = content;
-            chatMessages.appendChild(messageDiv);
+            
+            wrapper.appendChild(messageDiv);
+            chatMessages.appendChild(wrapper);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            
             return messageDiv;
         }
 
         function startTyping() {
-            currentAgentMessage = addMessage('', false);
-            currentAgentMessage.classList.add('typing');
-            currentAgentMessage.textContent = 'Agent is typing...';
+            clearEmptyState();
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message-wrapper agent';
+            wrapper.id = 'typing-wrapper';
+            
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator';
+            typingDiv.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+            
+            wrapper.appendChild(typingDiv);
+            chatMessages.appendChild(wrapper);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        function updateTyping(content) {
-            if (currentAgentMessage) {
-                currentAgentMessage.classList.remove('typing');
+        function updateAgentMessage(content) {
+            const typingWrapper = document.getElementById('typing-wrapper');
+            if (typingWrapper) {
+                typingWrapper.remove();
+            }
+            
+            if (!currentAgentMessage) {
+                currentAgentMessage = addMessage(content, false);
+            } else {
                 currentAgentMessage.textContent = content;
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
         }
 
         function stopTyping() {
-            if (currentAgentMessage) {
-                currentAgentMessage.classList.remove('typing');
-                currentAgentMessage = null;
+            const typingWrapper = document.getElementById('typing-wrapper');
+            if (typingWrapper) {
+                typingWrapper.remove();
             }
+            currentAgentMessage = null;
         }
 
         async function sendMessage(message) {
+            if (isFirstMessage) {
+                chatTitle.textContent = message.substring(0, 50) + (message.length > 50 ? '...' : '');
+                chatSubtitle.textContent = 'Active conversation';
+                isFirstMessage = false;
+            }
+
             // Add user message
             addMessage(message, true);
 
-            // Clear input
+            // Clear and reset input
             messageInput.value = '';
+            messageInput.style.height = 'auto';
             sendButton.disabled = true;
 
             // Start typing indicator
             startTyping();
 
-            // Get optional IDs
+            // Get optional parameters
             const cvId = cvIdInput.value.trim() || null;
             const conversationId = conversationIdInput.value.trim() || null;
             const bearerToken = bearerTokenInput.value.trim() || null;
 
             // Build request body
-            const requestBody = {
-                query: message
-            };
+            const requestBody = { query: message };
             if (conversationId) requestBody.conversation_id = conversationId;
             if (cvId) requestBody.cv_id = cvId;
             if (bearerToken) requestBody.bearer_token = bearerToken;
@@ -188,9 +608,7 @@
             try {
                 const response = await fetch('http://localhost:8002/chat/stream', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(requestBody),
                 });
 
@@ -209,29 +627,28 @@
 
                     buffer += decoder.decode(value, { stream: true });
                     const lines = buffer.split('\n');
-                    buffer = lines.pop(); // Keep incomplete line in buffer
+                    buffer = lines.pop();
 
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
                             try {
                                 const data = JSON.parse(line.substring(6));
                                 
-                                // Handle delta patches
                                 if (data.o === 'patch' && data.v) {
                                     for (const patch of data.v) {
                                         if (patch.p === '/message/content/parts/0' && patch.o === 'append') {
                                             accumulatedContent += patch.v;
-                                            updateTyping(accumulatedContent);
+                                            updateAgentMessage(accumulatedContent);
                                         }
                                     }
                                 }
                                 
-                                // Handle error events
                                 if (data.v && data.v.error) {
                                     console.error('Stream error:', data.v.error);
+                                    updateAgentMessage('Error: ' + data.v.error);
                                 }
                             } catch (e) {
-                                console.error('Error parsing SSE data:', e);
+                                console.error('Error parsing SSE:', e);
                             }
                         }
                     }
@@ -241,7 +658,7 @@
 
             } catch (error) {
                 console.error('Error:', error);
-                updateTyping(`Error: ${error.message}`);
+                updateAgentMessage(`❌ Error: ${error.message}`);
                 stopTyping();
             } finally {
                 sendButton.disabled = false;
@@ -252,37 +669,51 @@
         // Event listeners
         sendButton.addEventListener('click', () => {
             const message = messageInput.value.trim();
-            if (message) {
-                sendMessage(message);
-            }
+            if (message) sendMessage(message);
         });
 
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !sendButton.disabled) {
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
                 const message = messageInput.value.trim();
-                if (message) {
+                if (message && !sendButton.disabled) {
                     sendMessage(message);
                 }
             }
         });
 
+        newChatBtn.addEventListener('click', () => {
+            chatMessages.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">💬</div>
+                    <h3>Welcome to Rolekit Agent</h3>
+                    <p>Start a conversation by typing a message below. I'm here to help you with CV management and more.</p>
+                </div>
+            `;
+            chatTitle.textContent = 'New Conversation';
+            chatSubtitle.textContent = 'Ask me anything';
+            isFirstMessage = true;
+            conversationIdInput.value = '';
+            messageInput.focus();
+        });
+
         // Focus input on load
         messageInput.focus();
+
+        // Generate random conversation ID on load
+        if (!conversationIdInput.value) {
+            conversationIdInput.value = 'conv_' + Math.random().toString(36).substring(2, 15);
+        }
 
         // Check server connection
         fetch('http://localhost:8002/')
             .then(response => {
                 if (response.ok) {
-                    statusDiv.textContent = 'Connected to server';
-                    statusDiv.style.color = '#28a745';
-                } else {
-                    statusDiv.textContent = 'Server connection issue';
-                    statusDiv.style.color = '#dc3545';
+                    chatSubtitle.textContent = '🟢 Connected';
                 }
             })
-            .catch(error => {
-                statusDiv.textContent = 'Cannot connect to server';
-                statusDiv.style.color = '#dc3545';
+            .catch(() => {
+                chatSubtitle.textContent = '🔴 Disconnected';
             });
     </script>
 </body>
