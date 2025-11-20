@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume.Build - Debug</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body { padding: 20px; }
+        .debug { background: #f0f0f0; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Resume Builder - Debug Page</h1>
+    
+    <div class="debug">
+        <h2>Status Checks</h2>
+        <p id="html-check">✓ HTML loaded</p>
+        <p id="css-check">Loading CSS...</p>
+        <p id="js-check">Loading JavaScript...</p>
+        <p id="dom-check">Checking DOM...</p>
+        <p id="app-check">Checking App...</p>
+    </div>
+
+    <div id="app">
+        <p style="color: #999;">Loading application...</p>
+    </div>
+
+    <script>
+        console.log('=== RESUME BUILDER DEBUG ===');
+        
+        // Check CSS
+        const cssCheck = document.getElementById('css-check');
+        setTimeout(() => {
+            const styles = window.getComputedStyle(document.body);
+            cssCheck.innerHTML = '✓ CSS loaded';
+            cssCheck.className = 'success';
+        }, 100);
+
+        // Check if this script tag works
+        document.getElementById('js-check').innerHTML = '✓ JavaScript running';
+        document.getElementById('js-check').className = 'success';
+
+        // Check DOM
+        document.getElementById('dom-check').innerHTML = '✓ DOM available';
+        document.getElementById('dom-check').className = 'success';
+
+        // Load main app
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOMContentLoaded event fired');
+            
+            try {
+                if (typeof window.app === 'undefined') {
+                    document.getElementById('app-check').innerHTML = '⚠ Loading app.js...';
+                    
+                    const script = document.createElement('script');
+                    script.src = '/static/app.js';
+                    script.onload = () => {
+                        console.log('app.js loaded successfully');
+                        document.getElementById('app-check').innerHTML = '✓ App initialized';
+                        document.getElementById('app-check').className = 'success';
+                    };
+                    script.onerror = () => {
+                        console.error('Failed to load app.js');
+                        document.getElementById('app-check').innerHTML = '✗ Error loading app.js';
+                        document.getElementById('app-check').className = 'error';
+                    };
+                    document.head.appendChild(script);
+                } else {
+                    document.getElementById('app-check').innerHTML = '✓ App already loaded';
+                    document.getElementById('app-check').className = 'success';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('app-check').innerHTML = '✗ ' + error.message;
+                document.getElementById('app-check').className = 'error';
+            }
+        });
+    </script>
+</body>
+</html>

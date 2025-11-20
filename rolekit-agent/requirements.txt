@@ -4,5 +4,28 @@ langgraph
 langchain
 langchain-openai
 python-dotenv
+pydantic
+pydantic-settings
+email-validator
 python-multipart
 httpx
+
+# Document parsing
+pymupdf
+python-docx
+
+# Template engine
+jinja2
+
+# Scientific computing for embeddings
+numpy
+
+# PDF generation
+weasyprint
+
+# Database
+psycopg2-binary
+
+# Frontend (if needed for tailwind compilation)
+# Note: Tailwind CSS is typically installed via npm, not pip
+# tailwindcss requires Node.js/npm installation

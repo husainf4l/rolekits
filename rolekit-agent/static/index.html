@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume.Build - AI-Powered Resume Builder</title>
+    <link rel="stylesheet" href="/static/styles.css?v=2.0.26">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+</head>
+<body>
+    <div id="app"></div>
+    
+    <!-- Inline initialization to avoid caching issues -->
+    <script>
+        // Verify DOM is ready
+        if (document && document.getElementById) {
+            console.log('✓ DOM API available');
+            console.log('✓ App container found:', !!document.getElementById('app'));
+        } else {
+            console.error('✗ DOM API not available');
+        }
+    </script>
+    
+    <script src="/static/app.js?v=2.0.26"></script>
+    
+    <script>
+        // Fallback initialization if needed
+        console.log('Script load complete. App object:', typeof window.app);
+    </script>
+</body>
+</html>

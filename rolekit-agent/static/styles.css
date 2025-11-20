@@ -1,0 +1,2007 @@
+/**
+ * Modern Resume Builder - Professional CSS Styling
+ * Inspired by Resume.io with modern design patterns
+ */
+
+/* ============================================================================
+   VARIABLES & COLORS
+   ============================================================================ */
+
+:root {
+    /* Primary Colors */
+    --primary: #007AFF;
+    --primary-light: #5AC8FF;
+    --primary-dark: #0051D5;
+    
+    /* Secondary Colors */
+    --secondary: #5856D6;
+    --accent: #FF9500;
+    --success: #34C759;
+    --error: #FF3B30;
+    --warning: #FF9500;
+    
+    /* Neutral Colors */
+    --dark: #1C1C1C;
+    --dark-gray: #3A3A3C;
+    --gray: #8E8E93;
+    --light-gray: #D1D1D6;
+    --light: #F2F2F7;
+    --white: #FFFFFF;
+    
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+    
+    /* Typography */
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                   'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    --font-mono: 'Monaco', 'Menlo', 'Consolas', 'Courier New', monospace;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.2);
+    
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+    
+    /* Transitions */
+    --transition-fast: 150ms ease-in-out;
+    --transition-base: 250ms ease-in-out;
+    --transition-slow: 350ms ease-in-out;
+}
+
+/* ============================================================================
+   RESET & BASE STYLES
+   ============================================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-family);
+    color: var(--dark);
+    background: var(--light);
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+/* ============================================================================
+   TYPOGRAPHY
+   ============================================================================ */
+
+h1 { font-size: 3rem; font-weight: 700; line-height: 1.2; }
+h2 { font-size: 2rem; font-weight: 700; line-height: 1.3; }
+h3 { font-size: 1.5rem; font-weight: 600; line-height: 1.4; }
+h4 { font-size: 1.25rem; font-weight: 600; line-height: 1.4; }
+h5 { font-size: 1rem; font-weight: 600; }
+h6 { font-size: 0.875rem; font-weight: 600; }
+
+p { margin-bottom: var(--spacing-md); }
+a { color: var(--primary); text-decoration: none; transition: color var(--transition-fast); }
+a:hover { color: var(--primary-dark); }
+
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+    user-select: none;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Button Variants */
+.btn-primary {
+    background: var(--primary);
+    color: var(--white);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--primary-dark);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: var(--light-gray);
+    color: var(--dark);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: #C7C7CC;
+}
+
+.btn-danger {
+    background: var(--error);
+    color: var(--white);
+}
+
+.btn-danger:hover:not(:disabled) {
+    background: #E91E63;
+}
+
+/* Button Sizes */
+.btn-lg {
+    padding: var(--spacing-md) var(--spacing-2xl);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.btn-sm {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: 12px;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+/* Gradient Button */
+.btn-gradient {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: var(--white);
+}
+
+.btn-gradient:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Icon Button */
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 18px;
+    transition: all var(--transition-fast);
+}
+
+.btn-icon:hover {
+    background: var(--light-gray);
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--gray);
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color var(--transition-fast);
+}
+
+.btn-close:hover {
+    color: var(--error);
+}
+
+/* ============================================================================
+   NAVBAR
+   ============================================================================ */
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md) var(--spacing-xl);
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.navbar-brand h1 {
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+}
+
+.subtitle {
+    font-size: 12px;
+    color: var(--gray);
+    font-weight: 500;
+}
+
+.navbar-menu {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.nav-link {
+    color: var(--dark);
+    font-weight: 500;
+    transition: color var(--transition-fast);
+}
+
+.nav-link:hover {
+    color: var(--primary);
+}
+
+/* ============================================================================
+   HERO SECTION
+   ============================================================================ */
+
+.hero-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-2xl);
+    padding: var(--spacing-2xl) var(--spacing-xl);
+    align-items: center;
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.05), rgba(88, 86, 214, 0.05));
+}
+
+.hero-content h2 {
+    color: var(--dark);
+    margin-bottom: var(--spacing-md);
+}
+
+.hero-content > p {
+    font-size: 1.125rem;
+    color: var(--gray);
+    margin-bottom: var(--spacing-lg);
+}
+
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.stat strong {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.stat span {
+    font-size: 12px;
+    color: var(--gray);
+}
+
+.hero-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-image svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ============================================================================
+   FEATURES SECTION
+   ============================================================================ */
+
+.features-section {
+    padding: var(--spacing-2xl) var(--spacing-xl);
+    background: var(--white);
+}
+
+.features-section h3 {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+    color: var(--dark);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.feature-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-xl);
+    background: var(--light);
+    transition: all var(--transition-base);
+    text-align: center;
+}
+
+.feature-card:hover {
+    background: var(--white);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+}
+
+.feature-card h4 {
+    color: var(--dark);
+    margin: 0;
+}
+
+.feature-card p {
+    font-size: 13px;
+    color: var(--gray);
+    margin: 0;
+}
+
+/* ============================================================================
+   TEMPLATES
+   ============================================================================ */
+
+.templates-preview {
+    padding: var(--spacing-2xl) var(--spacing-xl);
+}
+
+.templates-preview h3 {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.templates-carousel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.template-button {
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+    border: 2px solid var(--light-gray);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    padding: 0;
+    text-align: left;
+    font-family: var(--font-family);
+}
+
+.template-button:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+    border-color: currentColor;
+}
+
+.template-button.selected {
+    border-color: currentColor;
+    box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.05), rgba(88, 86, 214, 0.05));
+}
+
+.template-button-header {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 48px;
+    position: relative;
+}
+
+.template-button-content {
+    padding: var(--spacing-md) var(--spacing-md) var(--spacing-sm);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.template-button-content h4 {
+    margin: 0 0 var(--spacing-xs) 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.template-button-content p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--gray);
+    flex-grow: 1;
+}
+
+.template-button-footer {
+    padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md);
+    border-top: 1px solid var(--light-gray);
+    display: flex;
+    justify-content: center;
+}
+
+.selected-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--success);
+    background: rgba(52, 199, 89, 0.1);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+}
+
+.select-badge {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.template-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+}
+
+.template-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+.template-preview-large {
+    aspect-ratio: 3/4;
+    background: linear-gradient(135deg, #E8E8E8, #F5F5F5);
+}
+
+.template-image {
+    width: 100%;
+    height: 100%;
+}
+
+.template-details {
+    padding: var(--spacing-lg);
+}
+
+.template-details h5 {
+    color: var(--dark);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.template-details p {
+    font-size: 12px;
+    color: var(--gray);
+    margin: 0 0 var(--spacing-md) 0;
+}
+
+/* ============================================================================
+   MY RESUMES SECTION
+   ============================================================================ */
+
+.my-resumes {
+    padding: var(--spacing-2xl) var(--spacing-xl);
+    background: var(--white);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xl);
+}
+
+.section-header h3 {
+    margin: 0;
+}
+
+.resumes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.resume-card {
+    background: var(--white);
+    border: 1px solid var(--light-gray);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-base);
+    cursor: pointer;
+}
+
+.resume-card:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+.resume-preview {
+    aspect-ratio: 3/4;
+    background: linear-gradient(135deg, var(--light), #E8E8E8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.resume-thumbnail {
+    width: 100%;
+    height: 100%;
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.resume-header {
+    background: var(--primary);
+    color: var(--white);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 12px;
+    text-align: center;
+}
+
+.resume-lines {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.resume-lines div {
+    height: 1px;
+    background: #D1D1D6;
+    border-radius: 0.5px;
+}
+
+.resume-info {
+    padding: var(--spacing-lg);
+}
+
+.resume-info h4 {
+    margin: 0 0 var(--spacing-sm) 0;
+    color: var(--dark);
+}
+
+.last-edited {
+    font-size: 12px;
+    color: var(--gray);
+    margin: 0 0 var(--spacing-md) 0;
+}
+
+.resume-actions {
+    display: flex;
+    gap: var(--spacing-md);
+}
+
+.resume-actions .btn {
+    flex: 1;
+}
+
+/* ============================================================================
+   EMPTY STATE
+   ============================================================================ */
+
+.empty-state {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-2xl);
+    text-align: center;
+    background: var(--light);
+    border-radius: var(--radius-lg);
+    border: 2px dashed var(--light-gray);
+}
+
+.empty-icon {
+    font-size: 3rem;
+}
+
+.empty-state h4 {
+    color: var(--dark);
+    margin: 0;
+}
+
+.empty-state p {
+    color: var(--gray);
+    margin: 0;
+}
+
+/* ============================================================================
+   FORMS & INPUTS
+   ============================================================================ */
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: var(--spacing-md);
+    font-size: 14px;
+    font-family: var(--font-family);
+    color: var(--dark);
+    background: var(--white);
+    border: 1px solid var(--light-gray);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-fast);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.form-control::placeholder {
+    color: var(--light-gray);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--dark);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+.field-with-action {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+}
+
+.field-with-action textarea,
+.field-with-action input {
+    flex: 1;
+}
+
+.field-with-action .btn-icon {
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* ============================================================================
+   EDITOR LAYOUT
+   ============================================================================ */
+
+.editor-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: var(--light);
+}
+
+.editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-md) var(--spacing-xl);
+    background: var(--white);
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.editor-header h2 {
+    flex: 1;
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.editor-actions {
+    display: flex;
+    gap: var(--spacing-md);
+}
+
+.editor-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    flex: 1;
+    overflow: hidden;
+    background: var(--light-gray);
+}
+
+.editor-left {
+    background: var(--white);
+    overflow-y: auto;
+    padding: var(--spacing-lg);
+}
+
+.editor-right {
+    background: var(--light);
+    overflow-y: auto;
+    padding: var(--spacing-lg);
+}
+
+.editor-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.form-section {
+    background: var(--light);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+}
+
+.form-section .section-header {
+    margin-bottom: var(--spacing-md);
+    margin-top: 0;
+}
+
+.form-section .section-header h4 {
+    margin: 0;
+}
+
+.form-subsection {
+    background: var(--white);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--light-gray);
+    margin-bottom: var(--spacing-md);
+}
+
+.empty-section {
+    color: var(--gray);
+    font-size: 13px;
+    text-align: center;
+    padding: var(--spacing-lg);
+    background: var(--light);
+    border-radius: var(--radius-md);
+    margin: 0;
+}
+
+/* ============================================================================
+   LIVE PREVIEW
+   ============================================================================ */
+
+.live-preview {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: var(--spacing-lg);
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.preview-header h5 {
+    margin: 0;
+}
+
+.resume-preview-content {
+    background: var(--white);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--light-gray);
+}
+
+.preview-header-section {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 2px solid var(--primary);
+}
+
+.preview-header-section h3 {
+    margin: 0 0 var(--spacing-xs) 0;
+    color: var(--dark);
+}
+
+.preview-subtitle {
+    font-size: 12px;
+    color: var(--gray);
+    margin: 0;
+}
+
+.preview-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.preview-section h4 {
+    font-size: 1rem;
+    color: var(--dark);
+    margin: 0 0 var(--spacing-md) 0;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+}
+
+.preview-item {
+    margin-bottom: var(--spacing-md);
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--spacing-xs);
+}
+
+.item-header strong {
+    color: var(--dark);
+    font-size: 13px;
+}
+
+.item-header span {
+    font-size: 12px;
+    color: var(--gray);
+}
+
+.item-company {
+    font-size: 12px;
+    color: var(--primary);
+    margin: 0 0 var(--spacing-xs) 0;
+    font-weight: 500;
+}
+
+.item-desc {
+    font-size: 12px;
+    color: var(--dark);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ============================================================================
+   SKILLS
+   ============================================================================ */
+
+.skills-input {
+    margin-bottom: var(--spacing-md);
+}
+
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.skill-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    background: var(--primary);
+    color: var(--white);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.skill-badge {
+    display: inline-block;
+    background: var(--light-gray);
+    color: var(--dark);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: 11px;
+}
+
+.skills-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.item-description {
+    color: var(--gray);
+    font-size: 13px;
+    line-height: 1.5;
+    margin: var(--spacing-sm) 0;
+}
+
+.item-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-sm);
+}
+
+.tech-tag {
+    display: inline-block;
+    background: var(--light);
+    color: var(--primary);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    border: 1px solid var(--primary);
+}
+
+/* ============================================================================
+   TEMPLATE STYLES - 6 UNIQUE PROFESSIONAL DESIGNS
+   Inspired by Resume.io & Canva best practices
+   ============================================================================ */
+
+/* ============================================================================
+   MODERN TEMPLATE - Tech-Inspired with Bold Header
+   (Inspired by Resume.io Tokyo/Modern)
+   - Blue gradient header with full-width design
+   - Minimalist icon-based sections
+   - Skill badges with background colors
+   ============================================================================ */
+
+.resume-template-modern {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+}
+
+.resume-template-modern .resume-preview-content {
+    background: #ffffff;
+    border-left: 4px solid #007AFF;
+}
+
+.resume-template-modern .preview-header-section {
+    background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+    color: white;
+    border-radius: 0;
+    padding: 24px;
+    margin: -16px -16px 24px -16px;
+    border: none;
+}
+
+.resume-template-modern .preview-header-section h3 {
+    color: white;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.resume-template-modern .preview-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.resume-template-modern .preview-section {
+    margin-bottom: 24px;
+    border-left: 3px solid #007AFF;
+    padding-left: 16px;
+}
+
+.resume-template-modern .preview-section h4 {
+    color: #007AFF;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.resume-template-modern .item-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.resume-template-modern .item-header strong {
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+.resume-template-modern .item-header span {
+    color: #007AFF;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.resume-template-modern .item-company {
+    color: #007AFF;
+    font-weight: 500;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.resume-template-modern .item-desc {
+    color: #666;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.resume-template-modern .skill-badge {
+    display: inline-block;
+    background: #007AFF;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+/* ============================================================================
+   CLASSIC TEMPLATE - Traditional Two-Column with Sidebar
+   (Inspired by Resume.io London/Classic)
+   - Two-column layout simulation
+   - Dark header with silver accents
+   - Traditional serif-like typography
+   ============================================================================ */
+
+.resume-template-classic {
+    background: #f5f5f5;
+}
+
+.resume-template-classic .resume-preview-content {
+    background: white;
+    border-top: 5px solid #2c3e50;
+}
+
+.resume-template-classic .preview-header-section {
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+    margin: -16px -16px 20px -16px;
+    border: none;
+    border-bottom: 2px solid #bdc3c7;
+}
+
+.resume-template-classic .preview-header-section h3 {
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+
+.resume-template-classic .preview-subtitle {
+    color: #ecf0f1;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+}
+
+.resume-template-classic .preview-section {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.resume-template-classic .preview-section:last-child {
+    border-bottom: none;
+}
+
+.resume-template-classic .preview-section h4 {
+    color: #2c3e50;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #2c3e50;
+}
+
+.resume-template-classic .item-header strong {
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.resume-template-classic .item-company {
+    color: #555;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.resume-template-classic .skill-badge {
+    display: inline-block;
+    background: #ecf0f1;
+    color: #2c3e50;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    border: 1px solid #bdc3c7;
+}
+
+/* ============================================================================
+   CREATIVE TEMPLATE - Vibrant with Color Blocks
+   (Inspired by Resume.io Madrid/Creative)
+   - Red accent blocks for sections
+   - Colorful skill pills
+   - Modern spacing and typography
+   ============================================================================ */
+
+.resume-template-creative {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+}
+
+.resume-template-creative .resume-preview-content {
+    background: white;
+    box-shadow: 0 5px 20px rgba(255, 107, 107, 0.15);
+}
+
+.resume-template-creative .preview-header-section {
+    background: linear-gradient(135deg, #FF6B6B 0%, #ee5a52 100%);
+    color: white;
+    padding: 24px;
+    margin: -16px -16px 24px -16px;
+    border-radius: 0 0 10px 0;
+}
+
+.resume-template-creative .preview-header-section h3 {
+    color: white;
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.resume-template-creative .preview-subtitle {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.resume-template-creative .preview-section {
+    margin-bottom: 24px;
+}
+
+.resume-template-creative .preview-section h4 {
+    color: #FF6B6B;
+    font-size: 15px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #fff0f0;
+    border-left: 4px solid #FF6B6B;
+    border-radius: 4px;
+}
+
+.resume-template-creative .item-header strong {
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.resume-template-creative .item-company {
+    color: #FF6B6B;
+    font-weight: 600;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.resume-template-creative .skill-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #FF6B6B 0%, #ff8787 100%);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 25px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+}
+
+/* ============================================================================
+   MINIMAL TEMPLATE - Ultra Clean & Simple
+   (Inspired by Resume.io Minimalist)
+   - Monochrome color scheme
+   - Maximum whitespace
+   - Elegant simplicity
+   ============================================================================ */
+
+.resume-template-minimal {
+    background: #fafafa;
+}
+
+.resume-template-minimal .resume-preview-content {
+    background: white;
+    padding: 20px;
+}
+
+.resume-template-minimal .preview-header-section {
+    border: none;
+    padding: 0 0 16px 0;
+    margin: 0 0 20px 0;
+    background: transparent;
+}
+
+.resume-template-minimal .preview-header-section h3 {
+    color: #1a1a1a;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.resume-template-minimal .preview-subtitle {
+    color: #999;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+}
+
+.resume-template-minimal .preview-section {
+    margin-bottom: 20px;
+}
+
+.resume-template-minimal .preview-section h4 {
+    color: #1a1a1a;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.resume-template-minimal .item-header strong {
+    color: #1a1a1a;
+    font-weight: 600;
+    font-size: 11px;
+}
+
+.resume-template-minimal .item-company {
+    color: #999;
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.resume-template-minimal .skill-badge {
+    display: inline-block;
+    background: #f0f0f0;
+    color: #1a1a1a;
+    padding: 4px 8px;
+    border-radius: 2px;
+    font-size: 9px;
+    font-weight: 600;
+    margin-right: 6px;
+    margin-bottom: 6px;
+}
+
+/* ============================================================================
+   BOLD TEMPLATE - Confident with Orange Accents
+   (Inspired by Resume.io Bold/Vivid)
+   - Strong orange branding
+   - Bold typography
+   - High contrast design
+   ============================================================================ */
+
+.resume-template-bold {
+    background: linear-gradient(135deg, #fff8f0 0%, #ffe8cc 100%);
+}
+
+.resume-template-bold .resume-preview-content {
+    background: white;
+    border-top: 6px solid #FF9500;
+    box-shadow: 0 4px 15px rgba(255, 149, 0, 0.1);
+}
+
+.resume-template-bold .preview-header-section {
+    background: #FF9500;
+    color: white;
+    padding: 22px;
+    margin: -16px -16px 20px -16px;
+    border: none;
+}
+
+.resume-template-bold .preview-header-section h3 {
+    color: white;
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 6px;
+}
+
+.resume-template-bold .preview-subtitle {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.resume-template-bold .preview-section {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: #f9f9f9;
+    border-radius: 6px;
+}
+
+.resume-template-bold .preview-section h4 {
+    color: #FF9500;
+    font-size: 15px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+}
+
+.resume-template-bold .item-header strong {
+    color: #1a1a1a;
+    font-weight: 800;
+    font-size: 13px;
+}
+
+.resume-template-bold .item-company {
+    color: #FF9500;
+    font-weight: 700;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.resume-template-bold .skill-badge {
+    display: inline-block;
+    background: #FF9500;
+    color: white;
+    padding: 8px 13px;
+    border-radius: 18px;
+    font-size: 11px;
+    font-weight: 800;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    box-shadow: 0 3px 10px rgba(255, 149, 0, 0.3);
+}
+
+/* ============================================================================
+   ELEGANT TEMPLATE - Sophisticated Purple Theme
+   (Inspired by Resume.io Elegant/Polished)
+   - Purple accent color
+   - Serif typography elements
+   - Luxury feel with refined spacing
+   ============================================================================ */
+
+.resume-template-elegant {
+    background: linear-gradient(135deg, #f5f1f8 0%, #ede4f0 100%);
+}
+
+.resume-template-elegant .resume-preview-content {
+    background: white;
+    border-left: 2px solid #9C27B0;
+}
+
+.resume-template-elegant .preview-header-section {
+    background: linear-gradient(135deg, #9C27B0 0%, #7b1fa2 100%);
+    color: white;
+    padding: 26px;
+    margin: -16px -16px 24px -16px;
+    border: none;
+    border-bottom: 3px solid #d7b5e8;
+}
+
+.resume-template-elegant .preview-header-section h3 {
+    color: white;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.resume-template-elegant .preview-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+}
+
+.resume-template-elegant .preview-section {
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+    border-bottom: 1px dashed #d7b5e8;
+}
+
+.resume-template-elegant .preview-section:last-child {
+    border-bottom: none;
+}
+
+.resume-template-elegant .preview-section h4 {
+    color: #9C27B0;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    padding-left: 0;
+}
+
+.resume-template-elegant .item-header strong {
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.resume-template-elegant .item-header span {
+    color: #9C27B0;
+    font-size: 11px;
+}
+
+.resume-template-elegant .item-company {
+    color: #9C27B0;
+    font-weight: 600;
+    font-size: 11px;
+    margin-bottom: 6px;
+}
+
+.resume-template-elegant .item-desc {
+    color: #555;
+    font-size: 11px;
+    line-height: 1.7;
+    font-style: italic;
+}
+
+.resume-template-elegant .skill-badge {
+    display: inline-block;
+    background: #f3e5f5;
+    color: #9C27B0;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #d7b5e8;
+}
+
+/* ============================================================================
+   BADGES
+   ============================================================================ */
+
+.badge {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-ats {
+    background: rgba(52, 199, 89, 0.1);
+    color: var(--success);
+}
+
+/* ============================================================================
+   FOOTER
+   ============================================================================ */
+
+.footer {
+    background: var(--dark);
+    color: var(--white);
+    text-align: center;
+    padding: var(--spacing-xl);
+    margin-top: var(--spacing-2xl);
+}
+
+.footer p {
+    margin: 0;
+    font-size: 12px;
+}
+
+/* ============================================================================
+   UTILITIES
+   ============================================================================ */
+
+.mt-2 { margin-top: var(--spacing-md); }
+.mb-2 { margin-bottom: var(--spacing-md); }
+.gap-lg { gap: var(--spacing-lg); }
+
+/* ============================================================================
+   LOADING SPINNER
+   ============================================================================ */
+
+.loading-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(2px);
+}
+
+.spinner-content {
+    background: var(--white);
+    padding: var(--spacing-2xl);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    box-shadow: var(--shadow-xl);
+}
+
+.spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--light-gray);
+    border-top: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: var(--spacing-md);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spinner-content p {
+    font-size: 14px;
+    color: var(--dark);
+    margin: 0;
+    font-weight: 500;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+    .editor-container {
+        grid-template-columns: 1fr;
+    }
+
+    .editor-left,
+    .editor-right {
+        border-right: none;
+        border-bottom: 1px solid var(--light-gray);
+    }
+
+    .hero-section {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-image {
+        display: none;
+    }
+
+    .templates-carousel {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+
+    .feature-card {
+        text-align: left;
+    }
+
+    .feature-icon {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        padding: var(--spacing-md);
+    }
+
+    .navbar-menu {
+        width: 100%;
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .navbar-menu .btn {
+        width: 100%;
+    }
+
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.5rem; }
+
+    .hero-section {
+        padding: var(--spacing-lg);
+    }
+
+    .hero-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .editor-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .editor-actions .btn {
+        width: 100%;
+    }
+
+    .resumes-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ============================================================================ */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.animate-fade-in {
+    animation: fadeIn var(--transition-base) ease-out;
+}
+
+.animate-slide-in {
+    animation: slideInUp var(--transition-base) ease-out;
+}
+
+/* ============================================================================
+   SCROLLBAR STYLING
+   ============================================================================ */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--light-gray);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gray);
+}
+
+/* ============================================================================
+   SKILL VALIDATION MODAL
+   ============================================================================ */
+
+.skill-validation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn var(--transition-base) ease-out;
+}
+
+.skill-validation-modal .modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+.skill-validation-modal .modal-content {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    max-width: 400px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    animation: slideInUp var(--transition-base) ease-out;
+}
+
+.skill-validation-modal .modal-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--light-gray);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.skill-validation-modal .modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.skill-validation-modal .modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--gray);
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all var(--transition-base);
+}
+
+.skill-validation-modal .modal-close:hover {
+    background: var(--light);
+    color: var(--dark);
+}
+
+.skill-validation-modal .modal-body {
+    padding: var(--spacing-lg);
+}
+
+.skill-validation-modal .validation-info {
+    background: #f0f8ff;
+    border-left: 4px solid var(--primary);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+}
+
+.skill-validation-modal .validation-info p {
+    margin: 8px 0;
+    font-size: 14px;
+    color: var(--dark);
+}
+
+.skill-validation-modal .validation-info p strong {
+    color: var(--dark);
+    font-weight: 600;
+}
+
+.skill-validation-modal .validation-message {
+    margin-top: 12px;
+    color: var(--primary);
+    font-weight: 500;
+    font-style: italic;
+}
+
+.skill-validation-modal .modal-footer {
+    padding: var(--spacing-lg);
+    border-top: 1px solid var(--light-gray);
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: flex-end;
+}
+
+.skill-validation-modal .modal-footer .btn {
+    padding: 10px 16px;
+    font-size: 14px;
+}
+
+/* ============================================================================
+   SKILLS SUGGESTION MODAL
+   ============================================================================ */
+
+.skills-suggestion-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn var(--transition-base) ease-out;
+}
+
+.skills-suggestion-modal .modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+.skills-suggestion-modal .modal-content {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: slideInUp var(--transition-base) ease-out;
+}
+
+.skills-suggestion-modal .modal-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--light-gray);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.skills-suggestion-modal .modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.skills-suggestion-modal .modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--gray);
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all var(--transition-base);
+}
+
+.skills-suggestion-modal .modal-close:hover {
+    background: var(--light);
+    color: var(--dark);
+}
+
+.skills-suggestion-modal .modal-body {
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+    flex: 1;
+}
+
+.skills-suggestion-modal .modal-body p {
+    margin: 0 0 var(--spacing-md) 0;
+    color: var(--dark-gray);
+    font-size: 14px;
+}
+
+.skills-suggestion-modal .skills-suggestions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.skills-suggestion-modal .skill-checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    border: 2px solid var(--light-gray);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    background: var(--white);
+}
+
+.skills-suggestion-modal .skill-checkbox:hover {
+    border-color: var(--primary);
+    background: rgba(0, 122, 255, 0.05);
+}
+
+.skills-suggestion-modal .skill-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+.skills-suggestion-modal .skill-checkbox span {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--dark);
+    flex: 1;
+}
+
+.skills-suggestion-modal .skill-checkbox input:checked + span {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.skills-suggestion-modal .modal-footer {
+    padding: var(--spacing-lg);
+    border-top: 1px solid var(--light-gray);
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: flex-end;
+}
+
+.skills-suggestion-modal .modal-footer .btn {
+    padding: 10px 16px;
+    font-size: 14px;
+}
+
+
