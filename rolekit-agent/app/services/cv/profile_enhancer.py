@@ -450,69 +450,6 @@ Please enhance the description and validate the technologies list.""")
         
         return result.content.strip()
 
-
-class ImpactQuantifier:
-    """Adds quantifiable metrics to achievements"""
-    
-    def __init__(self, model: str = "gpt-4o-mini"):
-        settings = get_settings()
-        self.llm = ChatOpenAI(
-            model=model, 
-            temperature=0.6,
-            openai_api_key=settings.OPENAI_API_KEY
-        )
-    
-    async def suggest_metrics(self, achievement: str) -> List[str]:
-        """
-        Suggest ways to add metrics to an achievement
-        
-        Args:
-            achievement: Achievement description
-            
-        Returns:
-            List of suggestions with metrics
-        """
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are an expert at quantifying achievements in CVs.
-
-Given an achievement, suggest 3 ways to add metrics or numbers to make it more impactful.
-
-Types of metrics to consider:
-- Percentages (%, increase/decrease)
-- Time saved (hours, days, months)
-- Money (revenue, cost savings)
-- Scale (users, customers, team size)
-- Frequency (daily, weekly, monthly)
-- Quality (error rate, uptime, satisfaction)
-
-Return as JSON array:
-["suggestion 1 with metric", "suggestion 2 with metric", "suggestion 3 with metric"]
-
-Example:
-Input: "Improved the application performance"
-Output: [
-  "Optimized application performance, reducing page load time by 45% (from 3.2s to 1.8s)",
-  "Improved application performance by implementing caching, serving 10,000+ daily users with 99.9% uptime",
-  "Enhanced application performance through code optimization, decreasing server costs by $5K/month"
-]"""),
-            ("human", "Achievement: {achievement}")
-        ])
-        
-        chain = prompt | self.llm
-        result = await chain.ainvoke({"achievement": achievement})
-        
-        try:
-            content = result.content.strip()
-            if content.startswith("```"):
-                content = content.split("```")[1]
-                if content.startswith("json"):
-                    content = content[4:]
-            
-            suggestions = json.loads(content.strip())
-            return suggestions
-        except:
-            return [result.content.strip()]
-
     async def suggest_skills(self, cv_data: Dict[str, Any]) -> List[str]:
         """
         Suggest relevant skills based on experience, projects, and technologies
@@ -615,4 +552,67 @@ Suggested Skills (JSON array only):""")
             print(f"Error parsing suggested skills: {e}")
             print(f"Response content: {result.content}")
             return []
+
+
+class ImpactQuantifier:
+    """Adds quantifiable metrics to achievements"""
+    
+    def __init__(self, model: str = "gpt-4o-mini"):
+        settings = get_settings()
+        self.llm = ChatOpenAI(
+            model=model, 
+            temperature=0.6,
+            openai_api_key=settings.OPENAI_API_KEY
+        )
+    
+    async def suggest_metrics(self, achievement: str) -> List[str]:
+        """
+        Suggest ways to add metrics to an achievement
+        
+        Args:
+            achievement: Achievement description
+            
+        Returns:
+            List of suggestions with metrics
+        """
+        prompt = ChatPromptTemplate.from_messages([
+            ("system", """You are an expert at quantifying achievements in CVs.
+
+Given an achievement, suggest 3 ways to add metrics or numbers to make it more impactful.
+
+Types of metrics to consider:
+- Percentages (%, increase/decrease)
+- Time saved (hours, days, months)
+- Money (revenue, cost savings)
+- Scale (users, customers, team size)
+- Frequency (daily, weekly, monthly)
+- Quality (error rate, uptime, satisfaction)
+
+Return as JSON array:
+["suggestion 1 with metric", "suggestion 2 with metric", "suggestion 3 with metric"]
+
+Example:
+Input: "Improved the application performance"
+Output: [
+  "Optimized application performance, reducing page load time by 45% (from 3.2s to 1.8s)",
+  "Improved application performance by implementing caching, serving 10,000+ daily users with 99.9% uptime",
+  "Enhanced application performance through code optimization, decreasing server costs by $5K/month"
+]"""),
+            ("human", "Achievement: {achievement}")
+        ])
+        
+        chain = prompt | self.llm
+        result = await chain.ainvoke({"achievement": achievement})
+        
+        try:
+            content = result.content.strip()
+            if content.startswith("```"):
+                content = content.split("```")[1]
+                if content.startswith("json"):
+                    content = content[4:]
+            
+            suggestions = json.loads(content.strip())
+            return suggestions
+        except:
+            return [result.content.strip()]
 

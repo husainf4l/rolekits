@@ -31,7 +31,8 @@ class ResumeBuilderApp {
         projects: [],
         skills: [],
         certifications: [],
-        languages: []
+        languages: [],
+        future_goals: ''
       },
       chatMessages: [],
       isLoading: false,
@@ -65,9 +66,16 @@ class ResumeBuilderApp {
       
       // Handle click events for buttons and actions
       document.addEventListener('click', (e) => {
+        console.log('🖱️ Click detected on:', e.target.tagName, e.target.className, 'data-action:', e.target.dataset?.action);
+        
         if (e.target && e.target.matches('[data-action]')) {
-          console.log('🔘 Click action:', e.target.dataset.action);
+          console.log('✅ Matched [data-action]:', e.target.dataset.action);
           this.handleAction(e.target.dataset.action, e.target);
+        } else if (e.target && e.target.closest('[data-action]')) {
+          // Handle clicks on children of [data-action] elements
+          const actionElement = e.target.closest('[data-action]');
+          console.log('✅ Found parent with [data-action]:', actionElement.dataset.action);
+          this.handleAction(actionElement.dataset.action, actionElement);
         }
       });
 
@@ -97,7 +105,7 @@ class ResumeBuilderApp {
       
       console.log('✅ Event listeners set up successfully');
     } catch (error) {
-      console.error('Error setting up event listeners:', error);
+      console.error('❌ Error setting up event listeners:', error);
     }
   }
 
@@ -127,7 +135,8 @@ class ResumeBuilderApp {
         'remove-project': (index) => this.removeProject(parseInt(index)),
         'add-skill': () => this.addSkill(),
         'remove-skill': (index) => this.removeSkill(parseInt(index)),
-        'suggest-skills': () => this.suggestSkills()
+        'suggest-skills': () => this.suggestSkills(),
+        'generate-future-goals': () => this.generateFutureGoals()
       };
 
       const handler = actions[action];
@@ -599,6 +608,19 @@ class ResumeBuilderApp {
           </div>
           ${this.renderSkillsForm()}
         </div>
+
+        <div class="form-section">
+          <div class="section-header">
+            <h4>Future Goals</h4>
+            <button class="btn-icon" data-action="generate-future-goals" title="Generate with AI">✨</button>
+          </div>
+          <textarea 
+            placeholder="Your professional aspirations and career goals for the next 3-5 years..." 
+            class="form-control"
+            data-field="future_goals"
+            rows="4"
+          >${this.state.resumeData.future_goals || ''}</textarea>
+        </div>
       </div>
     `;
   }
@@ -733,7 +755,7 @@ class ResumeBuilderApp {
         <div class="form-group">
           <label>Technologies Used (comma-separated)</label>
           <div class="field-with-action">
-            <input type="text" class="form-control" data-field="projects.${i}.technologies" placeholder="React, Node.js, MongoDB" value="${(proj.technologies || []).join(', ')}">
+            <input type="text" class="form-control" data-field="projects.${i}.technologies" placeholder="React, Node.js, MongoDB" value="${Array.isArray(proj.technologies) ? proj.technologies.join(', ') : (proj.technologies || '')}">
             <button class="btn-icon" data-action="enhance-text" data-field="projects.${i}.technologies" title="Enhance technologies">✨</button>
           </div>
         </div>
@@ -842,12 +864,19 @@ class ResumeBuilderApp {
           </div>
         ` : ''}
 
-        ${this.state.resumeData.skills.length > 0 ? `
+        ${Array.isArray(this.state.resumeData.skills) && this.state.resumeData.skills.length > 0 ? `
           <div class="preview-section">
             <h4>Skills</h4>
             <div class="skills-preview">
               ${this.state.resumeData.skills.map(s => `<span class="skill-badge">${s}</span>`).join('')}
             </div>
+          </div>
+        ` : ''}
+
+        ${this.state.resumeData.future_goals ? `
+          <div class="preview-section">
+            <h4>Future Goals</h4>
+            <p>${this.state.resumeData.future_goals}</p>
           </div>
         ` : ''}
       </div>
@@ -895,7 +924,31 @@ class ResumeBuilderApp {
   }
 
   selectTemplate(templateId) {
-    this.setState({ selectedTemplate: templateId });
+    console.log('🎨 selectTemplate called with:', templateId);
+    
+    if (!templateId) {
+      console.error('❌ No template ID provided');
+      return;
+    }
+    
+    // Create a new resume with this template and navigate to editor
+    this.state.currentResume = {
+      id: Date.now().toString(),
+      title: `New ${templateId.charAt(0).toUpperCase() + templateId.slice(1)} Resume`,
+      template: templateId,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    console.log('✅ Created resume:', this.state.currentResume);
+    
+    this.setState({ 
+      currentPage: 'editor',
+      currentResume: this.state.currentResume,
+      selectedTemplate: templateId
+    });
+    
+    console.log('✅ State updated, navigating to editor');
   }
 
   editResume(id) {
@@ -920,9 +973,106 @@ class ResumeBuilderApp {
     this.setState({ currentPage: 'dashboard' });
   }
 
-  exportPdf() {
-    console.log('Exporting to PDF...');
-    alert('PDF export feature coming soon!');
+  async exportPdf() {
+    try {
+      console.log('📥 Starting PDF export...');
+      
+      // Show loading spinner
+      this.showLoadingSpinner('Generating PDF...');
+      
+      // Prepare CV data in the format expected by the API
+      const cvData = {
+        contact: {
+          full_name: this.state.resumeData.contact.fullName || 'User',
+          email: this.state.resumeData.contact.email || undefined,
+          phone: this.state.resumeData.contact.phone || undefined,
+          location: this.state.resumeData.contact.location || undefined,
+          linkedin: this.state.resumeData.contact.linkedin || undefined,
+          github: this.state.resumeData.contact.github || undefined,
+          website: this.state.resumeData.contact.website || undefined,
+          portfolio: this.state.resumeData.contact.portfolio || undefined
+        },
+        summary: this.state.resumeData.professional_summary || '',
+        experience: (this.state.resumeData.experience || []).map(exp => ({
+          company: exp.company || '',
+          position: exp.job_title || '',
+          location: exp.location || '',
+          start_date: exp.start_date || '',
+          end_date: exp.end_date || '',
+          description: exp.description || '',
+          achievements: [],
+          technologies: exp.technologies ? (typeof exp.technologies === 'string' ? exp.technologies.split(',').map(t => t.trim()) : exp.technologies) : []
+        })),
+        education: (this.state.resumeData.education || []).map(edu => ({
+          institution: edu.school || '',
+          degree: edu.degree || '',
+          field_of_study: edu.field || '',
+          location: edu.location || '',
+          start_date: edu.start_date || '',
+          end_date: edu.end_date || '',
+          gpa: edu.gpa || '',
+          honors: []
+        })),
+        projects: (this.state.resumeData.projects || []).map(proj => ({
+          name: proj.name || '',
+          description: proj.description || '',
+          url: proj.url || '',
+          repository: proj.repository || '',
+          technologies: typeof proj.technologies === 'string' ? proj.technologies.split(',').map(t => t.trim()) : (proj.technologies || [])
+        })),
+        skills: this.state.resumeData.skills || [],
+        certifications: [],
+        languages: this.state.resumeData.languages || [],
+        awards: [],
+        publications: [],
+        volunteer: [],
+        future_goals: this.state.resumeData.future_goals || ''
+      };
+      
+      console.log('📋 CV Data prepared:', cvData);
+      
+      // Call the export API
+      const response = await fetch('/api/export', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          cv_data: cvData,
+          format: 'pdf',
+          style: this.state.selectedTemplate || 'modern'
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || `Export failed: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Export response:', data);
+      
+      if (data.success && data.download_url) {
+        // Download the file
+        const link = document.createElement('a');
+        link.href = data.download_url;
+        link.download = `resume_${new Date().toISOString().split('T')[0]}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        console.log('📥 PDF downloaded successfully');
+        alert('✅ PDF downloaded successfully!');
+      } else {
+        throw new Error(data.message || 'Export failed: No download URL received');
+      }
+      
+    } catch (error) {
+      console.error('❌ PDF export error:', error);
+      alert(`❌ PDF export failed: ${error.message}`);
+    } finally {
+      this.hideLoadingSpinner();
+    }
   }
 
   exportDocx() {
@@ -1306,36 +1456,59 @@ class ResumeBuilderApp {
   }
 
   async addSkill() {
-    const skillInput = document.querySelector('.skills-input input');
+    console.log('🔍 addSkill called');
+    const skillInput = document.querySelector('.skills-input input') || document.querySelector('#skill-input');
+    console.log('🔍 Input element found:', skillInput);
+    console.log('🔍 Input element HTML:', skillInput ? skillInput.outerHTML : 'NOT FOUND');
+    
     if (skillInput && skillInput.value.trim()) {
       const rawSkill = skillInput.value.trim();
+      console.log('📝 Adding skill from input:', rawSkill);
       
       // Clear input immediately
       skillInput.value = '';
       
       // Validate skill with LLM
       await this.validateAndAddSkill(rawSkill);
+    } else {
+      console.log('⚠️ Skill input is empty or not found');
+      if (!skillInput) {
+        console.log('❌ Could not find skill input element');
+        console.log('🔍 Trying alternate selectors:');
+        console.log('  - #skill-input:', document.querySelector('#skill-input'));
+        console.log('  - .skills-input input:', document.querySelector('.skills-input input'));
+        console.log('  - All inputs:', document.querySelectorAll('input'));
+      }
     }
   }
 
   async validateAndAddSkill(rawSkill) {
     try {
+      console.log('🎯 validateAndAddSkill called with:', rawSkill);
       this.showLoadingSpinner('Validating skill...');
 
       // Call validation API
+      const requestPayload = { skill: rawSkill };
+      console.log('📤 Sending request payload:', JSON.stringify(requestPayload));
+      
       const response = await fetch('/api/validate-skill', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          skill: rawSkill,
-          existing_skills: this.state.resumeData.skills
-        })
+        body: JSON.stringify(requestPayload)
+      });
+
+      console.log('📥 Response status:', response.status);
+      console.log('📥 Response headers:', {
+        contentType: response.headers.get('content-type'),
+        contentLength: response.headers.get('content-length')
       });
 
       if (!response.ok) {
+        console.log('❌ Response not OK, parsing error data');
         const errorData = await response.json().catch(() => ({}));
+        console.log('❌ Error data:', errorData);
         let errorMsg = response.statusText;
         
         if (errorData.detail) {
@@ -1348,15 +1521,28 @@ class ResumeBuilderApp {
       }
 
       const data = await response.json();
+      console.log('✅ Response data:', data);
       
-      if (data.success && data.validated_skill) {
-        // Show confirmation with corrected skill
-        this.showSkillValidationConfirmation(rawSkill, data.validated_skill, data.correction_applied);
+      if (data.success) {
+        // Use the skill returned by the API (normalized/validated)
+        const validatedSkill = data.skill || rawSkill;
+        const isStandard = data.is_standard;
+        
+        console.log('✅ Validation successful:');
+        console.log('   - validatedSkill:', validatedSkill);
+        console.log('   - isStandard:', isStandard);
+        
+        // Show confirmation modal
+        this.showSkillValidationConfirmation(rawSkill, validatedSkill, !isStandard);
       } else {
+        console.log('❌ data.success is false or undefined');
+        console.log('❌ Full response:', data);
         alert('Unable to validate skill. Please try again.');
       }
     } catch (error) {
-      console.error('Error validating skill:', error);
+      console.error('❌ Error validating skill:', error);
+      console.error('❌ Error message:', error.message);
+      console.error('❌ Error stack:', error.stack);
       alert(`Skill validation failed: ${error.message}`);
     } finally {
       this.hideLoadingSpinner();
@@ -1367,12 +1553,15 @@ class ResumeBuilderApp {
     // Create confirmation modal
     const modal = document.createElement('div');
     modal.className = 'skill-validation-modal';
+    
+    const appInstance = this; // Capture 'this' context
+    
     modal.innerHTML = `
       <div class="modal-overlay"></div>
       <div class="modal-content">
         <div class="modal-header">
           <h3>✅ Skill Validation</h3>
-          <button class="modal-close" onclick="this.closest('.skill-validation-modal').remove()">×</button>
+          <button class="modal-close" data-action="close-modal">×</button>
         </div>
         <div class="modal-body">
           ${correctionApplied ? `
@@ -1389,29 +1578,57 @@ class ResumeBuilderApp {
           `}
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" onclick="this.closest('.skill-validation-modal').remove()">Cancel</button>
-          <button class="btn btn-primary" onclick="this.closest('.skill-validation-modal').querySelector('.confirm-skill-btn').click()">Add Skill</button>
+          <button class="btn btn-secondary" data-action="cancel-skill">Cancel</button>
+          <button class="btn btn-primary" data-action="confirm-skill">Add Skill</button>
         </div>
       </div>
     `;
 
-    // Add confirmation button
-    const confirmButton = document.createElement('button');
-    confirmButton.className = 'confirm-skill-btn';
-    confirmButton.style.display = 'none';
-    confirmButton.onclick = () => {
-      // Check if skill already exists
-      const existingSkills = new Set(this.state.resumeData.skills.map(s => s.toLowerCase()));
-      if (!existingSkills.has(validatedSkill.toLowerCase())) {
-        this.state.resumeData.skills.push(validatedSkill);
-        this.renderApp();
-        alert(`✅ Skill added: "${validatedSkill}"`);
-      } else {
-        alert(`"${validatedSkill}" is already in your skills list!`);
-      }
+    // Add event listeners
+    const closeBtn = modal.querySelector('[data-action="close-modal"]');
+    const cancelBtn = modal.querySelector('[data-action="cancel-skill"]');
+    const confirmBtn = modal.querySelector('[data-action="confirm-skill"]');
+    
+    const closeModal = () => {
       modal.remove();
     };
-    modal.appendChild(confirmButton);
+    
+    const addSkill = () => {
+      // Check if skill already exists
+      const existingSkills = new Set(appInstance.state.resumeData.skills.map(s => s.toLowerCase()));
+      if (!existingSkills.has(validatedSkill.toLowerCase())) {
+        console.log('✨ Adding skill to state:', validatedSkill);
+        console.log('   Current skills before:', appInstance.state.resumeData.skills);
+        
+        appInstance.state.resumeData.skills.push(validatedSkill);
+        
+        console.log('   Current skills after:', appInstance.state.resumeData.skills);
+        console.log('   Total skills:', appInstance.state.resumeData.skills.length);
+        
+        // Close modal before rendering to avoid issues
+        modal.remove();
+        
+        console.log('🔄 Rendering app with updated skills...');
+        appInstance.renderApp();
+        
+        // Re-attach event listeners after render
+        console.log('� Re-attaching event listeners...');
+        setTimeout(() => {
+          appInstance.setupEventListeners();
+          console.log('✅ Skill successfully added and visible in preview!');
+        }, 100);
+        
+        alert(`✅ Skill added: "${validatedSkill}"`);
+      } else {
+        console.log('⚠️ Skill already exists:', validatedSkill);
+        alert(`"${validatedSkill}" is already in your skills list!`);
+        modal.remove();
+      }
+    };
+    
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    confirmBtn.addEventListener('click', addSkill);
 
     document.body.appendChild(modal);
   }
@@ -1529,12 +1746,15 @@ class ResumeBuilderApp {
     // Create a modal to select which skills to add
     const modal = document.createElement('div');
     modal.className = 'skills-suggestion-modal';
+    
+    const appInstance = this; // Capture 'this' context
+    
     modal.innerHTML = `
       <div class="modal-overlay"></div>
       <div class="modal-content">
         <div class="modal-header">
           <h3>💡 Suggested Skills</h3>
-          <button class="modal-close" onclick="this.closest('.skills-suggestion-modal').remove()">×</button>
+          <button class="modal-close" data-action="close-suggestions">×</button>
         </div>
         <div class="modal-body">
           <p>Select skills to add to your profile:</p>
@@ -1548,30 +1768,60 @@ class ResumeBuilderApp {
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" onclick="this.closest('.skills-suggestion-modal').remove()">Cancel</button>
-          <button class="btn btn-primary" onclick="this.closest('.skills-suggestion-modal').querySelector('.add-selected-skills-btn').click()">Add Selected Skills</button>
+          <button class="btn btn-secondary" data-action="cancel-suggestions">Cancel</button>
+          <button class="btn btn-primary" data-action="add-selected-skills">Add Selected Skills</button>
         </div>
       </div>
     `;
 
-    // Add button to actually add the skills
-    const addButton = document.createElement('button');
-    addButton.className = 'add-selected-skills-btn';
-    addButton.style.display = 'none';
-    addButton.onclick = () => {
+    // Add event listeners with proper context
+    const closeBtn = modal.querySelector('[data-action="close-suggestions"]');
+    const cancelBtn = modal.querySelector('[data-action="cancel-suggestions"]');
+    const addBtn = modal.querySelector('[data-action="add-selected-skills"]');
+    
+    const closeModal = () => {
+      console.log('🔌 Closing suggestions modal');
+      modal.remove();
+    };
+    
+    const addSelectedSkills = () => {
+      console.log('✨ Adding selected skills from suggestions');
       const checked = modal.querySelectorAll('.skill-checkbox input:checked');
+      let addedCount = 0;
+      
       checked.forEach(checkbox => {
         const skill = checkbox.dataset.skill;
+        console.log('  - Checking skill:', skill);
+        
         if (skill && !existingSkills.has(skill.toLowerCase())) {
-          this.state.resumeData.skills.push(skill);
+          console.log('    ✅ Adding skill:', skill);
+          appInstance.state.resumeData.skills.push(skill);
+          addedCount++;
+        } else {
+          console.log('    ⚠️ Skill already exists or empty:', skill);
         }
       });
+      
+      console.log(`📋 Total skills added: ${addedCount}`);
+      console.log('📋 All skills in state:', appInstance.state.resumeData.skills);
+      
       modal.remove();
-      this.renderApp();
+      
+      if (addedCount > 0) {
+        console.log('🔄 Rendering app...');
+        appInstance.renderApp();
+        alert(`✅ Added ${addedCount} skill(s) to your profile!`);
+      } else {
+        alert('No new skills selected!');
+      }
     };
-    modal.appendChild(addButton);
+    
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    addBtn.addEventListener('click', addSelectedSkills);
 
     document.body.appendChild(modal);
+    console.log('💡 Skills suggestion modal opened with', newSkills.length, 'suggestions');
   }
 
   loadTemplates() {
@@ -1581,6 +1831,98 @@ class ResumeBuilderApp {
       { id: 'classic', name: 'Classic' },
       { id: 'creative', name: 'Creative' }
     ];
+  }
+
+  async generateFutureGoals() {
+    try {
+      // Check if there's content to analyze
+      const hasExperience = this.state.resumeData.experience && this.state.resumeData.experience.length > 0;
+      const hasSummary = this.state.resumeData.professional_summary && this.state.resumeData.professional_summary.trim().length > 0;
+      
+      if (!hasExperience && !hasSummary) {
+        alert('Please add at least one experience entry and/or a professional summary to generate future goals');
+        return;
+      }
+
+      this.showLoadingSpinner('Generating future goals based on your experience and summary...');
+
+      // Extract key information from experience and summary
+      let experienceText = '';
+      if (this.state.resumeData.experience.length > 0) {
+        experienceText = this.state.resumeData.experience.map(exp => 
+          `${exp.job_title} at ${exp.company}: ${exp.description}`
+        ).join('\n');
+      }
+
+      const professionalSummary = this.state.resumeData.professional_summary || '';
+      const skills = Array.isArray(this.state.resumeData.skills) 
+        ? this.state.resumeData.skills.join(', ')
+        : (this.state.resumeData.skills || '');
+
+      // Build a comprehensive prompt for the LLM
+      const prompt = `Based on the following professional background, generate meaningful career goals for the next 3-5 years:
+
+Professional Summary:
+${professionalSummary || 'Not provided'}
+
+Work Experience:
+${experienceText || 'Not provided'}
+
+Skills:
+${skills || 'Not provided'}
+
+Generate a concise, professional statement about future career goals and aspirations. The statement should be personalized based on the provided background, realistic, and inspiring. Format it as a paragraph (not bullet points).`;
+
+      console.log('📝 Sending prompt to API...');
+
+      // Call the generate-future-goals endpoint
+      const response = await fetch('/api/generate-future-goals', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          text: prompt
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        let errorMsg = response.statusText;
+        
+        if (errorData.detail) {
+          errorMsg = typeof errorData.detail === 'string' 
+            ? errorData.detail 
+            : 'Failed to generate future goals';
+        }
+        
+        throw new Error(errorMsg);
+      }
+
+      const data = await response.json();
+      
+      if (data.enhanced_text) {
+        // Set the future goals in state
+        this.state.resumeData.future_goals = data.enhanced_text;
+        
+        // Update the textarea
+        const textarea = document.querySelector('[data-field="future_goals"]');
+        if (textarea) {
+          textarea.value = data.enhanced_text;
+        }
+        
+        console.log('✅ Future goals generated successfully!');
+        alert('✨ Future goals generated successfully!');
+        this.renderApp();
+      } else {
+        alert('Failed to generate future goals. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error generating future goals:', error);
+      alert(`Failed to generate future goals: ${error.message}`);
+    } finally {
+      this.hideLoadingSpinner();
+    }
   }
 }
 

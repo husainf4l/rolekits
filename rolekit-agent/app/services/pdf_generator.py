@@ -74,17 +74,63 @@ class PDFGenerator:
         """
         from weasyprint import HTML, CSS
         
-        # Optional: Add custom CSS for better print output
+        # Add custom CSS for better print output with proper page breaks
         custom_css = CSS(string='''
             @page {
                 size: A4;
                 margin: 0.75in;
             }
+            
             body {
                 font-family: 'Helvetica', 'Arial', sans-serif;
                 line-height: 1.6;
                 color: #333;
             }
+            
+            /* Prevent sections from splitting across pages */
+            h2 {
+                page-break-after: avoid;
+                page-break-inside: avoid;
+            }
+            
+            .job,
+            .education-item,
+            .project,
+            .certification-item {
+                page-break-inside: avoid;
+                orphans: 3;
+                widows: 3;
+            }
+            
+            .skills {
+                page-break-inside: avoid;
+            }
+            
+            /* Ensure at least some content stays with heading */
+            h2 + p,
+            h2 + div {
+                page-break-before: avoid;
+            }
+            
+            /* Improve spacing around page breaks */
+            hr {
+                page-break-after: avoid;
+            }
+            
+            .summary {
+                page-break-inside: avoid;
+            }
+            
+            /* Fine-tune orphans and widows for better text flow */
+            p {
+                orphans: 3;
+                widows: 3;
+            }
+            
+            ul {
+                page-break-inside: avoid;
+            }
+            
             @media print {
                 .no-print { display: none; }
             }

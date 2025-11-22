@@ -817,7 +817,7 @@ async def suggest_skills(request: SuggestSkillsRequest):
 # ============================================================================
 
 @router.post("/validate-skill")
-async def validate_skill(request: dict):
+async def validate_skill(request: ValidateSkillRequest):
     """
     Validate if a given skill is a standard/recognized skill.
     
@@ -827,7 +827,7 @@ async def validate_skill(request: dict):
     Returns validated skill status and recommendations
     """
     try:
-        skill = request.get("skill", "").strip()
+        skill = request.skill.strip()
         if not skill:
             raise ValueError("Skill parameter is required")
         
@@ -886,6 +886,39 @@ async def validate_skill(request: dict):
         
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Skill validation failed: {str(e)}")
+
+
+# ============================================================================
+# FUTURE GOALS GENERATION
+# ============================================================================
+
+@router.post("/generate-future-goals")
+async def generate_future_goals(request: dict):
+    """
+    Generate future career goals based on professional summary and experience.
+    
+    Analyzes the user's background and generates personalized career aspirations.
+    """
+    try:
+        text = request.get("text", "")
+        
+        if not text or not text.strip():
+            raise HTTPException(status_code=400, detail="No content provided to generate goals")
+        
+        enhancer = ProfileEnhancer()
+        
+        # Generate future goals using the LLM's enhance_summary capability
+        # This method will intelligently generate career goals based on the input
+        future_goals = await enhancer.enhance_summary(text)
+        
+        return {
+            "success": True,
+            "enhanced_text": future_goals,
+            "message": "Future goals generated successfully"
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to generate future goals: {str(e)}")
 
 
 # ============================================================================

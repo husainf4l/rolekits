@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Skill Validation Debug</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #f5f5f5; }
+        .test-section { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #0066cc; }
+        .log { background: #1e1e1e; color: #d4d4d4; padding: 10px; margin: 10px 0; border-radius: 4px; max-height: 300px; overflow-y: auto; font-size: 12px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; border: none; border-radius: 4px; background: #0066cc; color: white; }
+        button:hover { background: #0052a3; }
+        .success { color: #00aa00; }
+        .error { color: #ff0000; }
+        .info { color: #0066cc; }
+        h2 { margin-top: 0; color: #0066cc; }
+        input[type="text"] { padding: 8px; width: 300px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Skill Validation Debug Tool</h1>
+    
+    <div class="test-section">
+        <h2>1️⃣ API Health Check</h2>
+        <button onclick="testHealth()">Test Health Endpoint</button>
+        <div id="health-log" class="log"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2️⃣ Direct API Test</h2>
+        <button onclick="testValidateSkill('Python')">Validate "Python"</button>
+        <button onclick="testValidateSkill('MyCustomSkill')">Validate "MyCustomSkill"</button>
+        <div id="api-log" class="log"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3️⃣ Frontend Flow Test</h2>
+        <input type="text" id="skill-input" placeholder="Enter skill name" value="Python">
+        <button onclick="testFrontendFlow()">Simulate Frontend Flow</button>
+        <div id="flow-log" class="log"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4️⃣ App Instance Check</h2>
+        <button onclick="checkAppInstance()">Check if ResumeBuilderApp exists</button>
+        <div id="app-log" class="log"></div>
+    </div>
+
+    <script>
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const color = type === 'success' ? '#00aa00' : type === 'error' ? '#ff0000' : '#0066cc';
+            const prefix = type === 'success' ? '✅' : type === 'error' ? '❌' : '🔍';
+            element.innerHTML += `<div style="color: ${color};">${prefix} ${message}</div>`;
+            element.scrollTop = element.scrollHeight;
+        }
+
+        async function testHealth() {
+            const element = 'health-log';
+            document.getElementById(element).innerHTML = '';
+            log(element, 'Testing /api/health endpoint...');
+            
+            try {
+                const response = await fetch('/api/health');
+                log(element, `Status: ${response.status}`, response.ok ? 'success' : 'error');
+                const data = await response.json();
+                log(element, `Response: ${JSON.stringify(data)}`, 'success');
+            } catch (error) {
+                log(element, `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testValidateSkill(skill) {
+            const element = 'api-log';
+            document.getElementById(element).innerHTML = '';
+            log(element, `Testing /api/validate-skill with skill="${skill}"`);
+            
+            try {
+                const payload = { skill: skill };
+                log(element, `Sending payload: ${JSON.stringify(payload)}`);
+                
+                const response = await fetch('/api/validate-skill', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                log(element, `Status: ${response.status}`, response.ok ? 'success' : 'error');
+                const data = await response.json();
+                log(element, `Success field: ${data.success}`, data.success ? 'success' : 'error');
+                log(element, `Response: ${JSON.stringify(data, null, 2)}`, 'success');
+                
+            } catch (error) {
+                log(element, `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFrontendFlow() {
+            const element = 'flow-log';
+            document.getElementById(element).innerHTML = '';
+            
+            const skill = document.getElementById('skill-input').value;
+            log(element, `Simulating frontend flow for skill: "${skill}"`);
+            
+            try {
+                // Step 1: Prepare request
+                const requestPayload = { skill: skill };
+                log(element, `Step 1: Payload prepared: ${JSON.stringify(requestPayload)}`);
+                
+                // Step 2: Send request
+                log(element, `Step 2: Sending to /api/validate-skill...`);
+                const response = await fetch('/api/validate-skill', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestPayload)
+                });
+                
+                // Step 3: Check response
+                log(element, `Step 3: Response received with status ${response.status}`, response.ok ? 'success' : 'error');
+                
+                // Step 4: Parse JSON
+                const data = await response.json();
+                log(element, `Step 4: Parsed JSON data`);
+                
+                // Step 5: Check success field
+                const hasSuccess = data.hasOwnProperty('success');
+                log(element, `Step 5a: data has 'success' field? ${hasSuccess}`, hasSuccess ? 'success' : 'error');
+                log(element, `Step 5b: data.success value is: ${data.success}`, 'info');
+                
+                // Step 6: Evaluate condition
+                if (data.success) {
+                    log(element, `Step 6: ✨ SUCCESS! Modal would be shown`, 'success');
+                    log(element, `         Validated skill: "${data.skill}"`, 'success');
+                    log(element, `         Is standard: ${data.is_standard}`, 'success');
+                } else {
+                    log(element, `Step 6: ❌ FAILED! Error alert would be shown`, 'error');
+                    log(element, `         Full response: ${JSON.stringify(data)}`, 'error');
+                }
+                
+            } catch (error) {
+                log(element, `Error: ${error.message}`, 'error');
+                log(element, `Stack: ${error.stack}`, 'error');
+            }
+        }
+
+        function checkAppInstance() {
+            const element = 'app-log';
+            document.getElementById(element).innerHTML = '';
+            
+            log(element, 'Checking window.app instance...');
+            
+            if (window.app) {
+                log(element, `✅ window.app exists!`, 'success');
+                log(element, `Type: ${typeof window.app}`);
+                log(element, `Has addSkill: ${typeof window.app.addSkill}`, typeof window.app.addSkill === 'function' ? 'success' : 'error');
+                log(element, `Has validateAndAddSkill: ${typeof window.app.validateAndAddSkill}`, typeof window.app.validateAndAddSkill === 'function' ? 'success' : 'error');
+                log(element, `Has state: ${!!window.app.state}`, window.app.state ? 'success' : 'error');
+                
+                if (window.app.state && window.app.state.resumeData) {
+                    log(element, `Skills in state: ${window.app.state.resumeData.skills.length} skills`, 'info');
+                    log(element, `Skills: ${JSON.stringify(window.app.state.resumeData.skills)}`, 'info');
+                }
+            } else {
+                log(element, `❌ window.app does NOT exist!`, 'error');
+                log(element, `Available on window: ${Object.keys(window).filter(k => !k.startsWith('webkit') && !k.startsWith('chrome')).slice(0, 10).join(', ')}...`);
+            }
+        }
+
+        // Run health check on load
+        window.addEventListener('load', () => {
+            log('health-log', 'Page loaded, running health check...');
+            testHealth();
+        });
+    </script>
+</body>
+</html>

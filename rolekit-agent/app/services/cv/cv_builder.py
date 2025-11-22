@@ -51,7 +51,7 @@ class CVBuilder:
 {% for exp in experience %}
 ### {{ exp.position }}
 **{{ exp.company }}**{% if exp.location %} | {{ exp.location }}{% endif %}  
-*{{ exp.start_date }}{% if exp.end_date %} - {{ exp.end_date }}{% else %} - Present{% endif %}*
+*{{ exp.start_date }}{% if exp.end_date %} - {{ exp.end_date }}{% else %}{% if exp.start_date %} - Present{% endif %}{% endif %}*
 
 {% if exp.description %}
 {{ exp.description }}
@@ -237,35 +237,39 @@ class CVBuilder:
         }
         
         .job, .education-item, .project {
-            margin-bottom: 2rem;
+            margin-bottom: 1.8rem;
         }
         
         .job-title, .edu-degree, .project-name {
             font-size: 1.2rem;
             font-weight: 600;
             color: #1a1a1a;
+            margin-bottom: 0.3rem;
         }
         
         .company, .institution {
             font-size: 1.05rem;
             color: #0066cc;
             font-weight: 500;
+            margin-bottom: 0.2rem;
         }
         
         .date-range {
             font-size: 0.9rem;
             color: #666;
             font-style: italic;
+            margin-bottom: 0.5rem;
         }
         
         ul {
             margin-left: 1.5rem;
             margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
         }
         
         li {
-            margin-bottom: 0.4rem;
-            line-height: 1.6;
+            margin-bottom: 0.35rem;
+            line-height: 1.5;
         }
         
         .skills {
@@ -289,6 +293,18 @@ class CVBuilder:
             color: #666;
         }
         
+        .future-goals {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+            color: #444;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-left: 4px solid #0066cc;
+            border-radius: 4px;
+        }
+        
+        /* Print optimization - prevent section breaks */
         @media print {
             body {
                 background: white;
@@ -298,6 +314,76 @@ class CVBuilder:
                 box-shadow: none;
                 padding: 0;
             }
+            
+            /* Prevent sections from splitting across pages */
+            h2 {
+                page-break-after: avoid;
+                page-break-inside: avoid;
+                margin-top: 1.5rem;
+                margin-bottom: 1rem;
+                orphans: 3;
+                widows: 3;
+            }
+            
+            /* Keep job, education, and project items together */
+            .job,
+            .education-item,
+            .project {
+                page-break-inside: avoid;
+                orphans: 3;
+                widows: 3;
+            }
+            
+            /* Keep skills section together */
+            .skills {
+                page-break-inside: avoid;
+            }
+            
+            /* Keep lists together */
+            ul {
+                page-break-inside: avoid;
+            }
+            
+            /* Ensure header stays with content */
+            h1 {
+                page-break-after: avoid;
+            }
+            
+            .contact-info,
+            .contact-links {
+                page-break-after: avoid;
+            }
+            
+            hr {
+                page-break-after: avoid;
+            }
+            
+            .summary {
+                page-break-inside: avoid;
+                orphans: 2;
+                widows: 2;
+            }
+            
+            /* Tighten margins for better page utilization */
+            body {
+                padding: 20px;
+            }
+            
+            .cv-container {
+                padding: 40px 20px;
+            }
+            
+            /* Reduce spacing to fit better on pages */
+            h2 {
+                margin-top: 1.2rem;
+            }
+            
+            .job,
+            .education-item,
+            .project {
+                margin-bottom: 1.5rem;
+            }
+        }
         }
     </style>
 </head>
@@ -329,12 +415,10 @@ class CVBuilder:
         {% if experience %}
         <h2>Work Experience</h2>
         {% for exp in experience %}
-        <div class="job">
+            <div class="job">
             <div class="job-title">{{ exp.position }}</div>
             <div class="company">{{ exp.company }}{% if exp.location %} | {{ exp.location }}{% endif %}</div>
-            <div class="date-range">{{ exp.start_date }}{% if exp.end_date %} - {{ exp.end_date }}{% else %} - Present{% endif %}</div>
-            
-            {% if exp.description %}
+            <div class="date-range">{{ exp.start_date }}{% if exp.end_date %} - {{ exp.end_date }}{% else %}{% if exp.start_date %} - Present{% endif %}{% endif %}</div>            {% if exp.description %}
             <p style="margin-top: 0.5rem;">{{ exp.description }}</p>
             {% endif %}
             
@@ -378,15 +462,6 @@ class CVBuilder:
         {% endfor %}
         {% endif %}
         
-        {% if skills %}
-        <h2>Skills</h2>
-        <div class="skills">
-            {% for skill in skills %}
-            <span class="skill-tag">{{ skill }}</span>
-            {% endfor %}
-        </div>
-        {% endif %}
-        
         {% if projects %}
         <h2>Projects</h2>
         {% for project in projects %}
@@ -416,6 +491,15 @@ class CVBuilder:
         {% endfor %}
         {% endif %}
         
+        {% if skills %}
+        <h2>Skills</h2>
+        <div class="skills">
+            {% for skill in skills %}
+            <span class="skill-tag">{{ skill }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
         {% if certifications %}
         <h2>Certifications</h2>
         <ul>
@@ -441,6 +525,13 @@ class CVBuilder:
             <li>{{ award }}</li>
             {% endfor %}
         </ul>
+        {% endif %}
+        
+        {% if future_goals %}
+        <h2>Future Goals</h2>
+        <div class="future-goals">
+            {{ future_goals }}
+        </div>
         {% endif %}
     </div>
 </body>
